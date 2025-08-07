@@ -1,0 +1,93 @@
+package models
+
+import (
+	"database/sql"
+	"errors"
+	"fmt"
+	"time"
+)
+
+type Snippet struct {
+	ID      int
+	Title   string
+	Content string
+	Created time.Time
+	Expires time.Time
+}
+
+type SnippetModel struct {
+	DB *sql.DB
+}
+
+type SnippetModelInterface interface {
+	Insert(title string, content string, expire int) (int, error)
+	Get(Id int) (*Snippet, error)
+	Latest() ([]*Snippet, error)
+}
+
+func (m *SnippetModel) Insert(title string, content string, expire int) (int, error) {
+
+	stmt := `INSERT INTO snippets (title, content, created, expires) 
+			VALUES(?,?,datetime('now'), ?)`
+
+	expires := time.Now().UTC().AddDate(0, 0, expire)
+	fmt.Println("here++++", expires)
+	result, err := m.DB.Exec(stmt, title, content, expires.Format("2006-01-02 15:04:05"))
+	if err != nil {
+		return 0, err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
+}
+
+func (m *SnippetModel) Get(Id int) (*Snippet, error) {
+
+	stmt := `SELECT id,title,content,created,expires FROM snippets WHERE 
+			expires > datetime('now') AND id = ?`
+
+	row := m.DB.QueryRow(stmt, Id)
+
+	s := &Snippet{}
+	err := row.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNoRecord
+		} else {
+			return nil, err
+		}
+	}
+
+	return s, nil
+}
+
+func (m *SnippetModel) Latest() ([]*Snippet, error) {
+
+	stmt := `SELECT id, title, content, created, expires FROM snippets
+			WHERE expires > datetime('now') ORDER BY id DESC LIMIT 10`
+
+	rows, err := m.DB.Query(stmt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	snippets := []*Snippet{}
+
+	for rows.Next() {
+		s := &Snippet{}
+		err := rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
+		if err != nil {
+			return nil, err
+		}
+		snippets = append(snippets, s)
+	}
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+	return snippets, nil
+}
