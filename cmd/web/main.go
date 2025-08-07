@@ -69,7 +69,9 @@ func main() {
 	sessionManager := scs.New()
 	//sessionManager.Store = sqlite3store.New(db)
 	sessionManager.Lifetime = 12 * time.Hour
-	sessionManager.Cookie.Secure = true
+	if os.Getenv("ENV") != "production" {
+		sessionManager.Cookie.Secure = true
+	}
 
 	app := &application{
 		errorLog:       errorLog,
@@ -96,7 +98,12 @@ func main() {
 	}
 
 	infoLog.Printf("Server running on port %s......", *addr)
-	err = svr.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+	if os.Getenv("ENV") != "production" {
+		err = svr.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+	} else {
+		err = svr.ListenAndServe()
+	}
+
 	if err != nil {
 		errorLog.Fatal(err)
 	}
