@@ -35,9 +35,11 @@ func main() {
 	addr := flag.String("addr", ":4000", "Http network address")
 	//dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySql data source name")
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	if os.Getenv("ENV") != "production" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
 
 	Turso_URL := os.Getenv("TURSO_DATABASE_URL")
