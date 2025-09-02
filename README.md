@@ -15,6 +15,11 @@ This project was created as a learning exercise to explore modern web developmen
 
 ---
 
+## 📸 Screenshots
+### Snippet App Dashboard
+![Home Dashboard](./screenshots/dashboard1.png)
+![Create Snippet](./screenshots/dashboard2.png)
+
 ## 📂 Project Structure
 ```
 .
