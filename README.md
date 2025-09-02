@@ -62,8 +62,8 @@ The app will start on **http://localhost:4000**.
 ---
 
 ## 🌍 Deployment
-This app is deployed on **Railway**.  
-You can easily deploy it by connecting your repository to [Railway](https://railway.app/) and configuring the required environment variables (like the Turso connection string).
+This app is deployed on **Render*.  
+You can easily deploy it by connecting your repository to [Render](https://render.app/) and configuring the required environment variables (like the Turso connection string).
 
 ---
 
@@ -72,14 +72,14 @@ You can easily deploy it by connecting your repository to [Railway](https://rail
 - **Database**: Turso (SQLite cloud)  
 - **Templates**: HTML + Go’s `html/template` package  
 - **Sessions**: Secure cookies  
-- **Deployment**: Railway  
+- **Deployment**: Render  
 
 ---
 
 ## 📖 References
 - [Go Documentation](https://golang.org/doc/)  
 - [Turso Documentation](https://docs.turso.tech/)  
-- [Railway Documentation](https://docs.railway.app/)  
+- [Render Documentation](https://docs.render.app/)  
 
 ---
 
